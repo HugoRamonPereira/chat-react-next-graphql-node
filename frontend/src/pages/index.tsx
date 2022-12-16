@@ -1,24 +1,34 @@
 import React from 'react';
-import type { NextPage } from 'next';
-import { signIn, signOut, useSession } from 'next-auth/react';
-
+import type { NextPage, NextPageContext } from 'next';
+import { getSession, useSession } from 'next-auth/react';
+import { Box } from '@chakra-ui/react';
+import Chat from '../components/Chat';
+import Auth from '../components/Auth/Auth';
+import { Session } from 'next-auth';
 
 const Home: NextPage = () => {
-  const { data } = useSession();
-  console.log('Here is some data', data);
+  const { data: session } = useSession();
+  console.log('Here is the session', session);
+
+  const reloadSession = () => {};
 
   return (
-    <>
-      {data?.user ? (
-        <button onClick={() => signOut()}>Sign Out</button>
-      ) : (
-        <button onClick={() => signIn('google')}>Sign In</button>
-      )}
-      <br />
-      <br />
-      {data?.user?.name}
-    </>
+    <Box>
+      { session?.user?.username ?
+        <Chat /> : <Auth session={session} reloadSession={reloadSession} />
+      }
+    </Box>
   );
 };
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context);
+
+  return {
+    props: {
+      session
+    }
+  };
+}
 
 export default Home;
