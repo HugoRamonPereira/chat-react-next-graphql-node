@@ -4,13 +4,14 @@ import { getSession, useSession } from 'next-auth/react';
 import { Box } from '@chakra-ui/react';
 import Chat from '../components/Chat';
 import Auth from '../components/Auth/Auth';
-import { Session } from 'next-auth';
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
   console.log('Here is the session', session);
 
-  const reloadSession = () => {};
+  const reloadSession = () => {
+    console.log('reload session');
+  };
 
   return (
     <Box>
