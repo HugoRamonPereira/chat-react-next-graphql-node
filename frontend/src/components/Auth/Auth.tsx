@@ -4,6 +4,7 @@ import { Session } from 'next-auth';
 import { signIn } from 'next-auth/react';
 import { useMutation } from '@apollo/client';
 import UserOperations from '../../graphql/operations/user';
+import { CreateUsernameData, CreateUsernameVariables } from '../../../utils/types';
 
 interface IAuthProps {
   session: Session | null;
@@ -14,12 +15,14 @@ const Auth: React.FunctionComponent<IAuthProps> = ({ session, reloadSession }) =
   const [username, setUsername] = useState('');
   const [createUsername, { data, loading, error }] = useMutation<CreateUsernameData, CreateUsernameVariables>(UserOperations.Mutations.createUsername);
 
+  console.log('Here is the data', data);
+
   const onSubmit = async () => {
+    if (!username) return;
     try {
       await createUsername({ variables: { username } });
     } catch (error) {
       console.log('onSubmit error', error);
-
     }
   };
 
