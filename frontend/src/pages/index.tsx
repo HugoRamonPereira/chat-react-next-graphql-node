@@ -10,11 +10,13 @@ const Home: NextPage = () => {
   console.log('Here is the session', session);
 
   const reloadSession = () => {
-    console.log('reload session');
+    const event = new Event('visibilityChange');
+    document.dispatchEvent(event);
   };
 
   return (
     <Box>
+      {session?.user.username}
       { session?.user?.username ?
         <Chat /> : <Auth session={session} reloadSession={reloadSession} />
       }

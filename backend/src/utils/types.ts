@@ -15,7 +15,10 @@ export interface Session {
 export interface User {
   id: string;
   username: string;
+  email: string;
+  emailVerified: boolean;
   image: string;
+  name: string;
 }
 
 export interface CreateUsernameResponse {

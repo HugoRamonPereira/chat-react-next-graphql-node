@@ -5,6 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useMutation } from '@apollo/client';
 import UserOperations from '../../graphql/operations/user';
 import { CreateUsernameData, CreateUsernameVariables } from '../../../utils/types';
+import { toast } from 'react-hot-toast';
 
 interface IAuthProps {
   session: Session | null;
@@ -13,15 +14,32 @@ interface IAuthProps {
 
 const Auth: React.FunctionComponent<IAuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState('');
-  const [createUsername, { data, loading, error }] = useMutation<CreateUsernameData, CreateUsernameVariables>(UserOperations.Mutations.createUsername);
-
-  console.log('Here is the data', data);
+  const [createUsername, { loading, error }] = useMutation<CreateUsernameData, CreateUsernameVariables>(UserOperations.Mutations.createUsername);
 
   const onSubmit = async () => {
     if (!username) return;
     try {
-      await createUsername({ variables: { username } });
-    } catch (error) {
+      const { data } = await createUsername({ variables: { username } });
+
+      if (!data?.createUsername) {
+        throw new Error();
+      }
+
+      if (data.createUsername.error) {
+        const {
+          createUsername: { error },
+        } = data;
+
+        throw new Error(error);
+      }
+
+      toast.success('Username successfully created! 🚀');
+
+      // Reload session to get new username
+      reloadSession();
+
+    } catch (error: any) {
+      toast.error(error?.message);
       console.log('onSubmit error', error);
     }
   };
